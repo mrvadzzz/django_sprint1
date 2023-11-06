@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from django.http import Http404
+
 posts = [
     {
         'id': 0,
@@ -43,16 +45,23 @@ posts = [
     },
 ]
 
+# Создаем словарь с постами, где ключ - 'id', а значение - сам пост
+posts_dict = {post['id']: post for post in posts}
+
 
 def index(request):
-    context = {'post': posts[::-1]}
+    context = {'post': list(posts_dict.values())[::-1]}
     template = 'blog/index.html'
     return render(request, template, context)
 
 
 def post_detail(request, post_id):
-    context = {'post': posts[post_id]}
-    template = 'blog/detail.html'
+    post = posts_dict.get(post_id)
+    if post:
+        context = {'post': post}
+        template = 'blog/detail.html'
+    else:
+        raise Http404("Пост не найден")
     return render(request, template, context)
 
 
