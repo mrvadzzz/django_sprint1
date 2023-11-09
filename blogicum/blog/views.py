@@ -45,19 +45,20 @@ posts = [
     },
 ]
 
+# Создаем словарь с постами, где ключ - 'id', а значение - сам пост
+posts_dict = {post['id']: post for post in posts}
+
 
 def index(request):
-    posts_dict = {post['id']: post for post in posts}
-    context = {'posts': list(posts_dict.values())[::-1]}
+    context = {'post': posts[::-1]}
     template = 'blog/index.html'
     return render(request, template, context)
 
 
 def post_detail(request, post_id):
-    post_dict = {post['id']: post for post in posts}
-    post = post_dict.get(post_id)
+    post = posts_dict.get(post_id)
     if not post:
-        raise Http404('''Пост не найден''')
+        raise Http404('Пост не найден')
     context = {'post': post}
     template = 'blog/detail.html'
     return render(request, template, context)
